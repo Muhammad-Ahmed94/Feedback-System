@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
 import connectDB from './lib/db.js';
+import authRoutes from './routes/auth.route.js';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.get('/health', (req, res) => {
 });
 
 // ROUTES
+app.use("/api/auth", authRoutes);
 
 app.listen(port, () => {
     console.log("⚙️ server running on port", port);
