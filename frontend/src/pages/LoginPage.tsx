@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import FormField from "../components/FormField";
 import { Link } from "react-router-dom";
+import useUserStore from "../stores/useUserStore";
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({
@@ -8,10 +9,13 @@ const SignupPage = () => {
         password: "",
     });
     
+    const { login } = useUserStore();
     const handleFormSubmit = (e:React.FormEvent) => {
         e.preventDefault();
-        console.log(formData.email);
-        console.log(formData.password);
+        login(
+          formData.email,
+          formData.password
+        )
     };
 
   return (

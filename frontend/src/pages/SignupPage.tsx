@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import FormField from "../components/FormField";
 import { Link } from "react-router-dom";
+import useUserStore from "../stores/useUserStore";
 
 const SignupPage = () => {
     const [formData, setFormData] = useState({
@@ -8,10 +9,14 @@ const SignupPage = () => {
         password: "",
     });
     
+    const { loading, signup } = useUserStore();
+
     const handleFormSubmit = (e:React.FormEvent) => {
         e.preventDefault();
-        console.log(formData.email);
-        console.log(formData.password);
+        signup(
+            formData.email,
+            formData.password
+        );
     };
 
   return (
@@ -47,11 +52,10 @@ const SignupPage = () => {
                 <div className="pt-4">
               <button
                 type="submit"
-                // disabled={loading}
+                disabled={loading}
                 className="w-full px-6 py-3 bg-blue-400 hover:bg-opacity-90 disabled:opacity-50"
               >
-                {/* {loading ? "Creating..." : "Create Account"} */}
-                create
+                {loading ? "Creating..." : "Create Account"}
               </button>
             </div>
             </form>
