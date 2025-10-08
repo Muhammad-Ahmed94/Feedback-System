@@ -3,8 +3,15 @@ import axiosInst from "../lib/axios";
 import toast from "react-hot-toast";
 import axios from "axios";
 
+interface User {
+  anonymousId: string;
+  anonymousName: string;
+  role: string;
+  isEmailVerified: boolean;
+}
+
 interface userStoreInterface {
-  user: any;
+  user: User | null;
   loading: boolean;
   checkingAuth: boolean;
 
@@ -25,7 +32,16 @@ const useUserStore = create<userStoreInterface>((set, get) => ({
     try {
       const res = await axiosInst.post("/auth/signup", { email, password });
       set({ user: res.data.user, loading: false });
-      toast.success("Account created successfully");
+
+      // Show different message based on verification requirement
+      if (res.data.requiresVerification) {
+        toast.success(
+          "Account created! Please check your email to verify your account.",
+          { duration: 5000 }
+        );
+      } else {
+        toast.success("Account created successfully");
+      }
     } catch (error) {
       set({ loading: false });
 
@@ -43,7 +59,16 @@ const useUserStore = create<userStoreInterface>((set, get) => ({
     try {
       const res = await axiosInst.post("/auth/login", { email, password });
       set({ user: res.data.user, loading: false });
-      toast.success("User logged in successfully");
+
+      // Check if email verification is required
+      if (res.data.requiresVerification && !res.data.user.isEmailVerified) {
+        toast.error(
+          "Please verify your email before accessing the system. Check your inbox.",
+          { duration: 5000 }
+        );
+      } else {
+        toast.success(`Welcome back, ${res.data.user.anonymousName}!`);
+      }
     } catch (error) {
       set({ loading: false });
       if (axios.isAxiosError(error) && error.response) {
